@@ -24,7 +24,7 @@
         #app {
             display: flex;
             flex-wrap: wrap;
-            justify-content: space-between;
+            justify-content: center;
             gap: 20px;
             max-width: 1200px;
             width: 100%;
@@ -36,8 +36,9 @@
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             text-align: center;
-            width: 30%; /* Três containers por linha no desktop */
-            min-width: 300px;
+            width: calc(100% - 40px);
+            max-width: 350px;
+            height: auto;
             box-sizing: border-box;
             margin-bottom: 20px;
         }
@@ -67,19 +68,10 @@
             transform: scale(1.05);
         }
 
-        /* Para dispositivos móveis: mostrar um container por vez e permitir rolagem vertical */
         @media (max-width: 768px) {
             #app {
-                display: flex;
-                flex-direction: column; /* Exibir os containers verticalmente */
-                overflow-y: auto; /* Permitir rolagem vertical */
-                gap: 10px;
-            }
-
-            .container {
-                width: 100%; /* Um container por vez */
-                min-width: unset; /* Remover o valor mínimo de largura */
-                flex: 0 0 auto; /* Evitar que os containers encolham */
+                flex-direction: column;
+                align-items: center;
             }
         }
     </style>
