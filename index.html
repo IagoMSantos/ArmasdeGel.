@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loja de Brinquedos</title>
+    <!-- CSS Integrado -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('Fundo do site.jpg'); /* Substitua pelo caminho da sua imagem de fundo */
+            background-size: cover; /* Faz com que a imagem cubra toda a tela */
+            background-position: center; /* Centraliza a imagem de fundo */
+            background-repeat: no-repeat; /* Evita que a imagem se repita */
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center; /* Alinha os itens verticalmente ao centro */
+            height: 100vh;
+            overflow-x: auto; /* Permite rolagem horizontal */
+            position: relative; /* Permite posicionar o carrinho fixo */
+        }
+
+        #app {
+            display: flex;
+            flex-wrap: nowrap; /* Não permite quebra de linha */
+            justify-content: center; /* Centraliza os itens horizontalmente */
+            gap: 20px; /* Espaçamento entre os itens */
+            max-width: 1200px; /* Largura máxima do contêiner ajustada */
+            width: 100%;
+        }
+
+        .container {
+            background-color: white;
+            padding: 15px; /* Padding ajustado para melhor apresentação */
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Ajustado o box-shadow */
+            text-align: center;
+            width: 350px; /* Largura ajustada para 350 pixels */
+            height: 600px; /* Altura ajustada para 600 pixels */
+            box-sizing: border-box;
+        }
+
+        .produto img {
+            width: 100%; /* Ajuste para garantir que as imagens ocupem toda a largura do contêiner */
+            height: 250px; /* Altura ajustada para 250 pixels */
+            object-fit: cover; /* Garante que a imagem se ajuste ao contêiner sem distorção */
+            border-radius: 8px;
+        }
+
+        .produto h2 {
+            font-size: 16px; /* Ajustado o tamanho do título */
+            margin: 10px 0; /* Ajustado o margin do título */
+        }
+
+        .produto p {
+            font-size: 14px; /* Ajustado o tamanho da descrição */
+            color: #555;
+            margin: 10px 0; /* Adicionado margin para espaçamento */
+        }
+
+        .preco {
+            font-size: 16px; /* Ajustado o tamanho do preço */
+            font-weight: bold;
+            color: #e91e63;
+            margin: 10px 0; /* Adicionado margin para espaçamento */
+        }
+
+        .comprar {
+            background-color: #e91e63;
+            color: white;
+            border: none;
+            padding: 10px 15px; /* Ajustado o padding do botão */
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px; /* Ajustado o tamanho da fonte do botão */
+        }
+
+        .comprar:hover {
+            background-color: #c2185b;
+        }
+
+        .carrinho {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            z-index: 1000; /* Garante que o carrinho fique acima dos outros elementos */
+        }
+
+        .carrinho img {
+            width: 30px; /* Ajuste o tamanho da imagem do carrinho */
+            height: 30px;
+        }
+
+        .carrinho span {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .carrinho-list {
+            position: fixed;
+            top: 60px;
+            right: 20px;
+            background-color: white;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: none; /* Esconde a lista inicialmente */
+            max-height: 400px;
+            overflow-y: auto;
+            width: 250px;
+            z-index: 1000; /* Garante que a lista fique acima dos outros elementos */
+        }
+
+        .carrinho-list h3 {
+            margin-top: 0;
+            font-size: 16px;
+        }
+
+        .carrinho-list div.item {
+            border-bottom: 1px solid #ddd; /* Adiciona uma linha horizontal entre os itens */
+            padding: 5px 0;
+            margin-bottom: 5px;
+        }
+
+        .carrinho-list div.item:last-child {
+            border-bottom: none; /* Remove a linha horizontal do último item */
+        }
+
+        .carrinho-list p {
+            margin: 5px 0;
+        }
+
+        .carrinho-list button {
+            background-color: #e91e63;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .carrinho-list button:hover {
+            background-color: #c2185b;
+        }
+
+        .excluir {
+            cursor: pointer;
+            color: #e91e63;
+            margin-left: 10px;
+        }
+
+        .excluir:hover {
+            color: #c2185b;
+        }
+    </style>
+</head>
+<body>
+    <div class="carrinho" onclick="toggleCarrinho()">
+        <img src="carrinho.png" alt="Carrinho de Compras"> <!-- Substitua pelo caminho do ícone do carrinho -->
+        <span id="carrinho-count">0</span>
+    </div>
+    <div class="carrinho-list" id="carrinho-list">
+        <h3>Itens no Carrinho:</h3>
+        <div id="carrinho-itens"></div>
+        <p id="carrinho-total">Total: R$ 0,00</p>
+        <button onclick="pagarAgora()">Pagar Agora</button>
+    </div>
+    <div id="app"></div> <!-- Contêiner onde o conteúdo será adicionado pelo JavaScript -->
+
+    <!-- JavaScript Integrado -->
+    <script>
+        const carrinho = [];
+
+        function adicionarAoCarrinho(produto) {
+            carrinho.push(produto);
+            atualizarCarrinho();
+        }
+
+        function atualizarCarrinho() {
+            const carrinhoList = document.getElementById('carrinho-list');
+            const carrinhoItens = document.getElementById('carrinho-itens');
+            const carrinhoCount = document.getElementById('carrinho-count');
+            const carrinhoTotal = document.getElementById('carrinho-total');
+
+            carrinhoItens.innerHTML = '';
+            let total = 0;
+            carrinho.forEach((item, index) => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'item'; // Adiciona a classe 'item' para aplicar o estilo
+                itemDiv.innerHTML = `${item.nome} - ${item.preco} <span class="excluir" onclick="removerDoCarrinho(${index})">[Excluir]</span>`;
+                carrinhoItens.appendChild(itemDiv);
+                total += parseFloat(item.preco.replace('R$ ', '').replace(',', '.'));
+            });
+
+            carrinhoCount.innerText = carrinho.length;
+            carrinhoTotal.innerText = `Total: R$ ${total.toFixed(2).replace('.', ',')}`;
+            carrinhoList.style.display = carrinho.length ? 'block' : 'none';
+        }
+
+        function removerDoCarrinho(index) {
+            carrinho.splice(index, 1);
+            atualizarCarrinho();
+        }
+
+        function toggleCarrinho() {
+            const carrinhoList = document.getElementById('carrinho-list');
+            const display = carrinhoList.style.display === 'none' ? 'block' : 'none';
+            carrinhoList.style.display = display;
+        }
+
+        function pagarAgora() {
+            alert('Funcionalidade de pagamento não implementada.');
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const app = document.getElementById("app");
+
+            // Array de produtos com as variações
+            const produtos = [
+                {
+                    nome: "Submetraladora de Gel",
+                    descricao: "Leve a diversão a um novo nível com a Submetraladora de Gel! Este brinquedo combina o visual de uma submetraladora com a segurança dos projéteis de gel, proporcionando uma experiência de jogo emocionante e segura para todas as idades.",
+                    preco: "R$ 180,00",
+                    imagem: "arma1.jpg"
+                },
+                {
+                    nome: "Ak-47 de Gel",
+                    descricao: "Prepare-se para a emoção da batalha com a AK-47 de Gel! Este brinquedo icônico combina o visual imponente de uma AK-47 com a tecnologia segura dos projéteis de gel, proporcionando uma experiência de jogo emocionante e interativa.",
+                    preco: "R$ 200,00",
+                    imagem: "arma2.jpg"
+                },
+                {
+                    nome: "Glock de Gel",
+                    descricao: "A Glock de Gel é a escolha perfeita para quem procura uma experiência de jogo realista e segura. Este modelo de brinquedo combina a aparência icônica de uma Glock com a inovação da tecnologia de gel, proporcionando uma experiência de tiro divertida e inofensiva.",
+                    preco: "R$ 220,00",
+                    imagem: "arma3.jpg"
+                },
+                {
+                    nome: "Pistola Futuristica de Gel",
+                    descricao: "Prepare-se para uma aventura intergaláctica com a Pistola Futurística de Gel! Este brinquedo inovador combina o design futurista com a tecnologia segura dos projéteis de gel, oferecendo uma experiência de jogo emocionante e segura para todas as idades.",
+                    preco: "R$ 260,00",
+                    imagem: "arma4.jpg"
+                }
+            ];
+
+            // Função para criar elementos de produto dinamicamente
+            produtos.forEach(produto => {
+                const container = document.createElement("div");
+                container.className = "container";
+
+                const titulo = document.createElement("h2");
+                titulo.innerText = produto.nome;
+
+                const imagem = document.createElement("img");
+                imagem.src = produto.imagem; // Nome da imagem definida no array
+                imagem.alt = produto.nome;
+
+                const descricao = document.createElement("p");
+                descricao.innerText = produto.descricao;
+
+                const preco = document.createElement("p");
+                preco.className = "preco";
+                preco.innerText = produto.preco;
+
+                const botaoComprar = document.createElement("button");
+                botaoComprar.className = "comprar";
+                botaoComprar.innerText = "Comprar Agora";
+                botaoComprar.onclick = () => adicionarAoCarrinho(produto);
+
+                // Montagem dos elementos
+                container.appendChild(imagem);
+                container.appendChild(titulo);
+                container.appendChild(descricao);
+                container.appendChild(preco);
+                container.appendChild(botaoComprar);
+
+                app.appendChild(container);
+            });
+        });
+    </script>
+</body>
+</html>
