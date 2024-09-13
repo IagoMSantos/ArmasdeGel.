@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informações de Frete</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .form-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .form-container h2 {
+            margin-bottom: 20px;
+        }
+
+        .form-container input {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .form-container button {
+            width: 100%;
+            padding: 10px;
+            background-color: #ff3333;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .form-container button:hover {
+            background-color: #cc0000;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Preencha seus dados para o frete</h2>
+        <form id="frete-form">
+            <input type="text" id="nome" placeholder="Nome Completo" required>
+            <input type="text" id="endereco" placeholder="Endereço" required>
+            <input type="text" id="numero" placeholder="Número do Imóvel" required>
+            <input type="text" id="celular" placeholder="Número de Celular" required>
+            <input type="text" id="cep" placeholder="CEP" required>
+            <input type="text" value="Frete Grátis" disabled>
+            <button type="button" onclick="enviarFormulario()">Confirmar e Prosseguir</button>
+        </form>
+    </div>
+
+    <script>
+        function enviarFormulario() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const linkPagamento = urlParams.get('link');
+            // Aqui você pode adicionar validação de dados se necessário
+            window.location.href = decodeURIComponent(linkPagamento);
+        }
+    </script>
+</body>
+</html>
