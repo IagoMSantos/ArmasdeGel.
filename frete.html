@@ -81,12 +81,21 @@
             background-color: #dc3545;
         }
 
+        .entrega-estimada {
+            color: #28a745;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        .form-container h3 {
+            font-size: 16px;
+            margin: 0;
+        }
+
         /* Responsivo */
         @media (max-width: 768px) {
             .form-container {
-                padding: 20px;
-                max-width: none;
-                width: 90%; /* Maior largura no mobile */
+                padding: 15px;
             }
 
             .form-container h2 {
@@ -94,19 +103,18 @@
             }
 
             .form-container input, .form-container button {
-                padding: 14px;
-                font-size: 16px;
+                padding: 10px;
+                font-size: 14px;
             }
 
             .frete-gratis {
-                font-size: 16px;
+                font-size: 14px;
             }
         }
 
         @media (max-width: 480px) {
             .form-container {
-                padding: 15px;
-                width: 95%; /* Ainda maior no mobile */
+                padding: 10px;
             }
 
             .form-container h2 {
@@ -114,12 +122,12 @@
             }
 
             .form-container input, .form-container button {
-                padding: 12px;
-                font-size: 14px;
+                padding: 8px;
+                font-size: 12px;
             }
 
             .frete-gratis {
-                font-size: 14px;
+                font-size: 12px;
             }
         }
     </style>
@@ -137,6 +145,7 @@
             <input type="tel" id="celular" placeholder="Número de Celular" pattern="[0-9]{11}" required>
             <input type="email" id="email" placeholder="E-mail" required>
             <input type="text" id="cep" placeholder="CEP" pattern="[0-9]{8}" required>
+            <div id="entrega-estimada" class="entrega-estimada"></div>
             <input type="text" id="status-frete" value="Frete Grátis" disabled>
             <button type="button" onclick="enviarFormulario()">Confirmar e Prosseguir</button>
         </form>
@@ -179,8 +188,23 @@
             }, 1000);
         }
 
+        // Função para mostrar a estimativa de entrega
+        function mostrarEstimativaEntrega() {
+            const cepInput = document.getElementById("cep");
+            const entregaEstimativaDiv = document.getElementById("entrega-estimada");
+
+            if (cepInput.value.length === 8) {
+                entregaEstimativaDiv.textContent = "Seu pedido chegará em até 7 dias úteis.";
+            } else {
+                entregaEstimativaDiv.textContent = "";
+            }
+        }
+
         // Iniciar o contador quando a página carregar
         document.addEventListener("DOMContentLoaded", iniciarContador);
+
+        // Adicionar evento para atualizar a estimativa de entrega
+        document.getElementById("cep").addEventListener("input", mostrarEstimativaEntrega);
 
         function enviarFormulario() {
             const urlParams = new URLSearchParams(window.location.search);
