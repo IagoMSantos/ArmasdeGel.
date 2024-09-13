@@ -7,38 +7,47 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
+            background-image: url('fundo do site.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
             padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            margin: 0;
         }
 
         .form-container {
             background-color: white;
-            padding: 30px;
+            padding: 20px;
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             width: 100%;
             max-width: 400px;
+            text-align: center;
+            box-sizing: border-box;
         }
 
         .form-container h2 {
             margin-bottom: 20px;
+            font-size: 20px;
         }
 
         .form-container input {
-            width: calc(100% - 22px);
-            padding: 10px;
+            width: 100%;
+            padding: 12px;
             margin-bottom: 15px;
             border: 1px solid #ddd;
             border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box;
         }
 
         .form-container button {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             background-color: #ff3333;
             color: white;
             border: none;
@@ -46,28 +55,130 @@
             cursor: pointer;
             font-size: 16px;
             transition: background-color 0.3s ease;
+            box-sizing: border-box;
         }
 
         .form-container button:hover {
             background-color: #cc0000;
+        }
+
+        .frete-gratis {
+            background-color: #28a745;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .contador {
+            font-size: 14px;
+            color: #ff3333;
+            margin-bottom: 15px;
+        }
+
+        .expirado {
+            background-color: #dc3545;
+        }
+
+        /* Responsivo */
+        @media (max-width: 768px) {
+            .form-container {
+                padding: 15px;
+            }
+
+            .form-container h2 {
+                font-size: 18px;
+            }
+
+            .form-container input, .form-container button {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            .frete-gratis {
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .form-container {
+                padding: 10px;
+            }
+
+            .form-container h2 {
+                font-size: 16px;
+            }
+
+            .form-container input, .form-container button {
+                padding: 8px;
+                font-size: 12px;
+            }
+
+            .frete-gratis {
+                font-size: 12px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="form-container">
         <h2>Preencha seus dados para o frete</h2>
+        <div id="frete-gratis" class="frete-gratis">
+            Frete Grátis! Aproveite em até <span id="contador">10:00</span> minutos!
+        </div>
         <form id="frete-form">
             <input type="text" id="nome" placeholder="Nome Completo" required>
             <input type="text" id="endereco" placeholder="Endereço" required>
             <input type="text" id="numero" placeholder="Número do Imóvel" required>
-            <input type="text" id="cep" placeholder="CEP" required>
-            <input type="text" id="celular" placeholder="Número de Celular" required>
-            <input type="text" value="Frete Grátis" disabled>
+            <input type="tel" id="celular" placeholder="Número de Celular" pattern="[0-9]{11}" required>
+            <input type="email" id="email" placeholder="E-mail" required>
+            <input type="text" id="cep" placeholder="CEP" pattern="[0-9]{8}" required>
+            <input type="text" id="status-frete" value="Frete Grátis" disabled>
             <button type="button" onclick="enviarFormulario()">Confirmar e Prosseguir</button>
         </form>
     </div>
 
     <script>
+        // Função para iniciar o contador
+        function iniciarContador() {
+            const freteGratisDiv = document.getElementById("frete-gratis");
+            const contadorSpan = document.getElementById("contador");
+            const statusFrete = document.getElementById("status-frete");
+
+            let tempoRestante = 10 * 60; // 10 minutos em segundos
+
+            // Mostrar o aviso de frete grátis
+            freteGratisDiv.style.display = "block";
+
+            const intervalo = setInterval(() => {
+                let minutos = Math.floor(tempoRestante / 60);
+                let segundos = tempoRestante % 60;
+
+                // Formatar para sempre mostrar dois dígitos
+                minutos = minutos < 10 ? `0${minutos}` : minutos;
+                segundos = segundos < 10 ? `0${segundos}` : segundos;
+
+                contadorSpan.textContent = `${minutos}:${segundos}`;
+
+                // Reduzir o tempo restante
+                tempoRestante--;
+
+                // Quando o tempo acabar, desativar o frete grátis
+                if (tempoRestante < 0) {
+                    clearInterval(intervalo);
+                    contadorSpan.textContent = "00:00";
+                    statusFrete.value = "Frete Expirado";
+                    freteGratisDiv.classList.remove("frete-gratis");
+                    freteGratisDiv.classList.add("expirado");
+                    freteGratisDiv.textContent = "O Frete Grátis expirou!";
+                }
+            }, 1000);
+        }
+
+        // Iniciar o contador quando a página carregar
+        document.addEventListener("DOMContentLoaded", iniciarContador);
+
         function enviarFormulario() {
             const urlParams = new URLSearchParams(window.location.search);
             const linkPagamento = urlParams.get('link');
